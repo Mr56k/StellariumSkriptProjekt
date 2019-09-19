@@ -5,8 +5,6 @@
 // Description: A template generated for the workshop at public observatory Hof at September, 28th 2019.
 // Based on the work of Ingo Berg: https://beltoforion.de/ - Thank you, Ingo!
 
-import { ItemOfInterest } from "../Shared/ItemOfInterest"
-import { Constellation } from "../Shared/Constellation"
 import { Helper } from "../Shared/Helper"
 import { Strings, DictType } from "./Strings"
 
@@ -63,7 +61,6 @@ function setup() : void
     StelMovementMgr.setFlagEnableMouseNavigation(false);
     
     strings = new Strings().getLocalizedStrings("de_DE");
-    StelMovementMgr.
 }
 
 

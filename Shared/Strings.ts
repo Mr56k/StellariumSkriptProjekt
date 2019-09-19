@@ -45,10 +45,6 @@ export class Strings {
     public constructor() {
     }
 
-    public verify() : void {
-        // todo: Check all langauge versions and panik if one of them is missing a string.
-    }
-
     public getLocalizedStrings(loc : string = "") : DictType {
 
         // This function is using the localized name of the sun in order to try to determine the UI culture.
