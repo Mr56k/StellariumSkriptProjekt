@@ -1,2 +1,3 @@
 # StellariumSkriptProjekt
-Basic Template for creating Stellarium Scripts based on Typescript for the use with Visual Studio Code
+
+Template für die Erstellung eigener Stellarium Scripte mit Typescript in Visual Studio Code. Das Template basiert auf einer stark vereinfachten Fassung der Beispielskripte von Ingo Berg (www.beltoforion.de).
