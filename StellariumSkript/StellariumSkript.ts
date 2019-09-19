@@ -11,6 +11,7 @@ import { Strings, DictType } from "./Strings"
 // Enter Coordinates of Location
 var param_lat : number= 50.0;
 var param_long : number= 12.0;
+var location_name : string= "Zentraleuropa";
 
 // Definitions for strings
 var strings : DictType;
@@ -22,52 +23,48 @@ function setup() : void
     // (https://github.com/Stellarium/stellarium/issues?q=is%3Aissue+is%3Aclosed)
     core.wait(2);
 
-    SolarSystem.setFlagPlanets(true);
-    SolarSystem.setMoonScale(5);
-    SolarSystem.setFlagMoonScale(false);
-    SolarSystem.setFontSize(25);
-    SolarSystem.setFlagTrails(false);
-	SolarSystem.setFlagOrbits(false);
+    // Setup SolarSystem Objects
+    SolarSystem.setFlagPlanets(false);
 	SolarSystem.setFlagLabels(false);
 
-    StarMgr.setFontSize(20);
-    StarMgr.setLabelsAmount(0);
-
-    StelMovementMgr.setAutoMoveDuration(5);
-
+    // Setup Constellations
     ConstellationMgr.setFlagLines(false);
     ConstellationMgr.setFlagLabels(false);
-    ConstellationMgr.setArtIntensity(0.0);
     ConstellationMgr.setFlagArt(false);
     ConstellationMgr.setFlagBoundaries(false);
     ConstellationMgr.setConstellationLineThickness(2);
-    ConstellationMgr.setFontSize(32);
+    ConstellationMgr.setFontSize(24);
     ConstellationMgr.setFlagConstellationPick(true);
     ConstellationMgr.setFlagIsolateSelected(true);  
 
+    // Setup Sporadic Meteors
     SporadicMeteorMgr.setFlagShow(true);
     SporadicMeteorMgr.setZHR(5000);
 
+    // Setup other Display Options
     core.setSkyCulture("western");
-    core.setGuiVisible(true);
+    core.setGuiVisible(false);
     core.setMilkyWayVisible(true);
-    core.setMilkyWayIntensity(4);
-    core.setObserverLocation(param_long, param_lat, 950, 0, "Athos Centro Astronómico", "Earth");
+    core.setMilkyWayIntensity(3);
 
+    // Setup Location
+    core.setObserverLocation(param_long, param_lat, 950, 0, location_name, "Earth");
+
+    // Setup Landscape
     LandscapeMgr.setFlagAtmosphere(true);
-    LandscapeMgr.setCurrentLandscapeName("Athos Centro Astronómico");
-    LandscapeMgr.setFlagLandscapeUseMinimalBrightness(true);
-	
+    
+    // Setup Movement
     StelMovementMgr.setFlagEnableMouseNavigation(false);
     
+    // Load localization Strings
     strings = new Strings().getLocalizedStrings("de_DE");
 }
 
-
-function intro() : void
+// Initialize Application
+function initialize() : void
 {
     core.setTimeRate(0);
-    core.setDate("2019-08-29T21:30:00", "utc");
+    core.setDate("2019-01-01T00:00:00", "utc");
 
     let labelTitle = LabelMgr.labelScreen(strings.title, 250, 750, false, 70, "#66ccff");
     LabelMgr.setLabelShow(labelTitle, true);
@@ -76,24 +73,22 @@ function intro() : void
     LabelMgr.setLabelShow(labelSubTitle, true);
 
     core.moveToAltAzi(20, 270);
-
-    GoHome(15, 0, 10);
+    core.wait(5);
     LabelMgr.deleteAllLabels();
 }
 
-
-function GoHome(delay : number, zoomDelay : number, moveDelay : number) : void
+//
+// Do the Work, which the Script should do for you in this function!
+// If you are not sure what you are doing, only change this function!
+//
+function doWork() : void 
 {
-    core.output("Moving to home postion");
-    StelMovementMgr.zoomTo(90, zoomDelay);
-    core.moveToAltAzi(20, 175, moveDelay)
-    core.wait(delay);
+
 }
 
 // 
 // Try to undo script settings that will mess up stellariums expected opertation
 //
-
 function cleanup() : void
 {
     ConstellationMgr.setFlagIsolateSelected(false);  
@@ -107,32 +102,8 @@ function cleanup() : void
 }
 
 //
-// Custom Actions for some constellations
-//
-
-function customActionPolaris() : void
-{
-    GridLinesMgr.setFlagEquatorGrid(true);
-	StelMovementMgr.zoomTo(100,2);
-
-    core.setTimeRate(2000); 
-    core.wait(10);
-
-    core.setTimeRate(60); 
-    GridLinesMgr.setFlagEquatorGrid(false);
-}
-
-
-function customActionAndromeda() : void
-{
-	StelMovementMgr.zoomTo(3,2);
-    core.wait(10);
-}
-
-//
 // Main script entry Point
 //
-
 function main() : void
 {
     try
@@ -142,12 +113,13 @@ function main() : void
         // Setup Stellarium
         setup()
 
-        // Run Intro
-        intro();
+        // Inititalize Stellarium
+        initialize();
 
-        //core.setTimeRate(60); 
+        // Do some work
+        doWork();
 
-                core.wait(3);
+        core.wait(3);
     }
     catch(exc)
     {
