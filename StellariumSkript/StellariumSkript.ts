@@ -19,10 +19,6 @@ var strings : DictType;
 // Setup Stellarium as wanted
 function setup() : void
 {
-    // Wait to work around #491 
-    // (https://github.com/Stellarium/stellarium/issues?q=is%3Aissue+is%3Aclosed)
-    core.wait(2);
-
     // Setup SolarSystem Objects
     SolarSystem.setFlagPlanets(false);
 	SolarSystem.setFlagLabels(false);
