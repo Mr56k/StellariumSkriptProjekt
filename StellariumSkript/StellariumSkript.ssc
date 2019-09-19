@@ -97,10 +97,12 @@
 // Description: A template generated for the workshop at public observatory Hof at September, 28th 2019.
 // Based on the work of Ingo Berg: https://beltoforion.de/ - Thank you, Ingo!
 Object.defineProperty(exports, "__esModule", { value: true });
-var Strings_1 = __webpack_require__(1);
+var Helper_1 = __webpack_require__(1);
+var Strings_1 = __webpack_require__(3);
 // Enter Coordinates of Location
 var param_lat = 50.0;
 var param_long = 12.0;
+var location_name = "Zentraleuropa";
 // Definitions for strings
 var strings;
 // Setup Stellarium as wanted
@@ -108,41 +110,38 @@ function setup() {
     // Wait to work around #491 
     // (https://github.com/Stellarium/stellarium/issues?q=is%3Aissue+is%3Aclosed)
     core.wait(2);
-    SolarSystem.setFlagPlanets(true);
-    SolarSystem.setMoonScale(5);
-    SolarSystem.setFlagMoonScale(false);
-    SolarSystem.setFontSize(25);
-    SolarSystem.setFlagTrails(false);
-    SolarSystem.setFlagOrbits(false);
+    // Setup SolarSystem Objects
+    SolarSystem.setFlagPlanets(false);
     SolarSystem.setFlagLabels(false);
-    StarMgr.setFontSize(20);
-    StarMgr.setLabelsAmount(0);
-    StelMovementMgr.setAutoMoveDuration(5);
+    // Setup Constellations
     ConstellationMgr.setFlagLines(false);
     ConstellationMgr.setFlagLabels(false);
-    ConstellationMgr.setArtIntensity(0.0);
     ConstellationMgr.setFlagArt(false);
     ConstellationMgr.setFlagBoundaries(false);
     ConstellationMgr.setConstellationLineThickness(2);
-    ConstellationMgr.setFontSize(32);
+    ConstellationMgr.setFontSize(24);
     ConstellationMgr.setFlagConstellationPick(true);
     ConstellationMgr.setFlagIsolateSelected(true);
+    // Setup Sporadic Meteors
     SporadicMeteorMgr.setFlagShow(true);
     SporadicMeteorMgr.setZHR(5000);
+    // Setup other Display Options
     core.setSkyCulture("western");
-    core.setGuiVisible(true);
+    core.setGuiVisible(false);
     core.setMilkyWayVisible(true);
-    core.setMilkyWayIntensity(4);
-    core.setObserverLocation(param_long, param_lat, 950, 0, "Athos Centro Astronómico", "Earth");
+    core.setMilkyWayIntensity(3);
+    // Setup Location
+    core.setObserverLocation(param_long, param_lat, 950, 0, location_name, "Earth");
+    // Setup Landscape
     LandscapeMgr.setFlagAtmosphere(true);
-    LandscapeMgr.setCurrentLandscapeName("Athos Centro Astronómico");
-    LandscapeMgr.setFlagLandscapeUseMinimalBrightness(true);
+    // Setup Movement
     StelMovementMgr.setFlagEnableMouseNavigation(false);
+    // Load localization Strings
     strings = new Strings_1.Strings().getLocalizedStrings("de_DE");
 }
-function intro() {
+function initialize() {
     core.setTimeRate(0);
-    core.setDate("2019-08-29T21:30:00", "utc");
+    core.setDate("2019-01-01T00:00:00", "utc");
     var labelTitle = LabelMgr.labelScreen(strings.title, 250, 750, false, 70, "#66ccff");
     LabelMgr.setLabelShow(labelTitle, true);
     var labelSubTitle = LabelMgr.labelScreen(strings.subtitle, 250, 850, false, 40, "#66ccff");
@@ -152,7 +151,6 @@ function intro() {
     LabelMgr.deleteAllLabels();
 }
 function GoHome(delay, zoomDelay, moveDelay) {
-    core.output("Moving to home postion");
     StelMovementMgr.zoomTo(90, zoomDelay);
     core.moveToAltAzi(20, 175, moveDelay);
     core.wait(delay);
@@ -169,40 +167,25 @@ function cleanup() {
     core.clear("natural");
 }
 //
-// Custom Actions for some constellations
-//
-function customActionPolaris() {
-    GridLinesMgr.setFlagEquatorGrid(true);
-    StelMovementMgr.zoomTo(100, 2);
-    core.setTimeRate(2000);
-    core.wait(10);
-    core.setTimeRate(60);
-    GridLinesMgr.setFlagEquatorGrid(false);
-}
-function customActionAndromeda() {
-    StelMovementMgr.zoomTo(3, 2);
-    core.wait(10);
-}
-//
 // Main script entry Point
 //
 function main() {
     try {
-        //Helper.installDebugHooks();
+        Helper_1.Helper.installDebugHooks();
         // Setup Stellarium
         setup();
-        // Run Intro
-        intro();
-        //core.setTimeRate(60); 
+        // Inititalize Stellarium
+        initialize();
+        core.setTimeRate(1);
         core.wait(3);
     }
     catch (exc) {
         core.output(exc);
-        //Helper.showError(exc);
+        Helper_1.Helper.showError(exc);
     }
     finally {
         cleanup();
-        //Helper.removeDebugHooks();
+        Helper_1.Helper.removeDebugHooks();
     }
 }
 main();
@@ -214,17 +197,210 @@ main();
 
 "use strict";
 
+Object.defineProperty(exports, "__esModule", { value: true });
+var Strings_1 = __webpack_require__(2);
+var originalDebug = core.debug;
+var strings = new Strings_1.Strings().getLocalizedStrings();
+exports.Helper = {
+    installDebugHooks: function () {
+        var osd = new OnScreenLogger(15);
+        var betterDebug = function (msg) {
+            if (msg instanceof Error) {
+                osd.addLine(msg.toString(), "#ff3333");
+            }
+            else {
+                //                osd.addLine(msg.toString(), "#66ccff");
+                osd.addLine(msg.toString(), "#66ffcc");
+            }
+            originalDebug(msg);
+        };
+        core.debug = betterDebug;
+    },
+    removeDebugHooks: function () {
+        if (originalDebug != null) {
+            core.debug = originalDebug;
+        }
+        core.debug("Debug Hooks removed!");
+    },
+    restoreState: function (o) {
+        // todo: restore state of public getters
+    },
+    storeState: function (o) {
+        // todo: store state of public getters
+    },
+    showError: function (err) {
+        var x = 100;
+        var y = 100;
+        var labelTitle = LabelMgr.labelScreen(strings.anErrorOccured, x, y, true, 50, "#ff3333");
+        LabelMgr.setLabelShow(labelTitle, true);
+        var labelTitle = LabelMgr.labelScreen(err.message, x, y + 70, true, 40, "#ff3333");
+        LabelMgr.setLabelShow(labelTitle, true);
+    },
+    showTitle: function (title, subTitle, x, y) {
+        core.debug(title);
+        core.debug(subTitle);
+        var labelTitle = LabelMgr.labelScreen(title, x, y, true, 70, "#66ccff");
+        LabelMgr.setLabelShow(labelTitle, true);
+        var labelTitle = LabelMgr.labelScreen(subTitle, x, y + 100, true, 40, "#66ccff");
+        LabelMgr.setLabelShow(labelTitle, true);
+    },
+    waitUntilDate: function (endDate) {
+        do {
+            var simulationTime = core.getDate();
+            core.wait(.1);
+        } while (simulationTime < endDate);
+    }
+};
+// A class to create an on screen console using with Stellarium Labels
+var OnScreenLogger = /** @class */ (function () {
+    function OnScreenLogger(numLines) {
+        // An array of stellarium labels serving as a circular buffer
+        this._labelHandle = [];
+        this._labelContent = [];
+        this._labelColor = [];
+        // X-Position of the log output
+        this._xp = 70;
+        // Output text font size
+        this._fs = 15;
+        // Line Margin
+        this._margin = 5;
+        for (var i = 0; i < numLines; ++i) {
+            this._labelContent.push("");
+            this._labelColor.push("");
+        }
+    }
+    OnScreenLogger.prototype.addLine = function (msg, color) {
+        if (color === void 0) { color = "#66ccff"; }
+        for (var i = this._labelContent.length - 2; i >= 0; --i) {
+            this._labelContent[i + 1] = this._labelContent[i];
+            this._labelColor[i + 1] = this._labelColor[i];
+        }
+        this._labelContent[0] = msg;
+        this._labelColor[0] = color;
+        // delete old labels
+        for (var i = 0; i < this._labelHandle.length; ++i) {
+            var lb = this._labelHandle[i];
+            LabelMgr.deleteLabel(lb);
+        }
+        // Recreate labels
+        for (var i = 0; i < this._labelContent.length; ++i) {
+            var xp = this._xp;
+            var yp = core.getScreenHeight() - 150 - i * (this._fs + this._margin);
+            //            let lb : number = LabelMgr.labelScreen(this._labelContent[i] + "(" + this._labelContent.length.toString() + ";" + this._labelHandle.length.toString() + ")", xp, yp, true, this._fs, "#66ccff");
+            var msg_1 = this._labelContent[i];
+            if (msg_1)
+                msg_1 = "> " + msg_1;
+            this._labelHandle[i] = LabelMgr.labelScreen(msg_1, xp, yp, true, this._fs, this._labelColor[i]);
+        }
+    };
+    return OnScreenLogger;
+}());
+;
+
+
+/***/ }),
+/* 2 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var Strings = /** @class */ (function () {
+    function Strings() {
+        this._german = {
+            anErrorOccured: "Ein Fehler ist aufgetreten",
+            january: "Januar",
+            february: "Februar",
+            march: "März",
+            april: "April",
+            may: "Mai",
+            june: "Juni",
+            july: "Juli",
+            august: "August",
+            september: "September",
+            october: "Oktober",
+            november: "November",
+            december: "Dezember",
+            dateAndTime: "Datum und Zeit",
+            winterSolstice: "Wintersonnenwende",
+            summerSolstice: "Sommersonnenwende",
+            sun: "Sonne"
+        };
+        this._english = {
+            anErrorOccured: "An error occured",
+            january: "January",
+            february: "February",
+            march: "March",
+            april: "April",
+            may: "May",
+            june: "June",
+            july: "July",
+            august: "August",
+            september: "September",
+            october: "October",
+            november: "November",
+            december: "December",
+            dateAndTime: "Date and Time",
+            winterSolstice: "Winter solstice",
+            summerSolstice: "Sommer solstice",
+            sun: "Sun"
+        };
+    }
+    Strings.prototype.getLocalizedStrings = function (loc) {
+        if (loc === void 0) { loc = ""; }
+        // This function is using the localized name of the sun in order to try to determine the UI culture.
+        var lang;
+        if (loc) {
+            lang = loc;
+            core.debug('Forcing language to "' + lang + '"');
+        }
+        else {
+            lang = core.getAppLanguage();
+            core.debug('App language is "' + lang + '"');
+        }
+        var s;
+        // Germany, Austria and Switzerland get the german strings. 		
+        if (lang == "de_DE" || lang == "de_AT" || lang == "de_CH") {
+            s = this._german;
+        }
+        // default is english
+        else {
+            s = this._english;
+        }
+        // Add support functions
+        s.monthFromInt = function (m) {
+            if (m < 1 || m > 12)
+                return "invalid month";
+            var monthNames = [s.january, s.february, s.march,
+                s.april, s.may, s.june,
+                s.july, s.august, s.september,
+                s.october, s.november, s.december];
+            return monthNames[m - 1];
+        };
+        return s;
+    };
+    return Strings;
+}());
+exports.Strings = Strings;
+
+
+/***/ }),
+/* 3 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
 // Creates a class for creating the german texts for this script
 Object.defineProperty(exports, "__esModule", { value: true });
 var Strings = /** @class */ (function () {
     function Strings() {
         this._german = {
-            title: "Sternbilder des Herbstes",
-            subtitle: "Himmel über Sachsen",
+            title: "Hallo Sternfreund,",
+            subtitle: "willkommen bei Stellarium!",
         };
         this._english = {
-            title: "Constellations of the Autumn Sky",
-            subtitle: "Northern Hemispehere",
+            title: "Hi Stargazer,",
+            subtitle: "welcome to Stellarium!",
         };
     }
     Strings.prototype.getLocalizedStrings = function (loc) {

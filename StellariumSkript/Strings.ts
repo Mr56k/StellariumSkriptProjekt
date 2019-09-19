@@ -4,13 +4,13 @@ export type DictType = { [key: string]: string };
 
 export class Strings {
     private _german : DictType = {
-        title:    "Sternbilder des Herbstes",
-        subtitle: "Himmel über Sachsen",
+        title:    "Hallo Sternfreund,",
+        subtitle: "willkommen bei Stellarium!",
     };
 
     private _english : DictType = {
-        title:    "Constellations of the Autumn Sky",
-        subtitle: "Northern Hemispehere",
+        title:    "Hi Stargazer,",
+        subtitle: "welcome to Stellarium!",
     };    
 
     public getLocalizedStrings(loc : string = "") : DictType {
