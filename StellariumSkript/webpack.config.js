@@ -6,7 +6,7 @@ const path = require('path');
 // ssc file for use with stellarium
 //
 
-let targetName = path.basename(__dirname); //"UrsaMinor";
+let targetName = path.basename(__dirname);
 
 module.exports = {
   entry: './' + targetName + '.ts',
